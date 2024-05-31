@@ -1,3 +1,4 @@
+```js
 // ==UserScript==
 // @name         New Userscript
 // @namespace    http://tampermonkey.net/
@@ -141,5 +142,4 @@ const [drStart, drName, drArmy, drLand] = [...$$("#game-leaderboard tr:nth-child
 
 const diffArmy = (((drArmy - drArmy) / myArmy) * 100).toFixed(1)
 
-
-
+```
