@@ -14,6 +14,31 @@ let 开启auto = false
 document.onkeydown = e=>e.code === 'Space' && (开启auto = true)
 document.onkeyup = e=>e.code === 'Space' && (开启auto = false)
 
+function initUI() {
+    if ($('#game-page #ui'))
+        return
+
+    document.getElementById('game-page').insertAdjacentHTML('beforeend', `
+<div id="ui" style="position: absolute;
+    right: 0;
+    background: #251b10;
+    top: 0;
+    z-index: 9999;
+    font-size: 50px;
+    left: 50%;
+    transform: translate(-50%, -10%);
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid white;
+    text-align: center;
+    font-weight: bolder;">
+
+    <div id="army">3 (3/4)</div>
+    <div id="land">3 (3/4)</div>
+</div>
+`);
+
+}
 function init() {
     //clearInterval(timer)
 
@@ -52,12 +77,13 @@ window.timer1 = setInterval(()=>{
     const gameStaus2 = $('#gameMap') && !$('.game-end-alert')
     if (gameStaus === gameStaus2)
         return
-    
+
     gameStaus = gameStaus2
-    
+
     if (gameStaus) {
-         init()
-        
+        init()
+        initUI()
+
         // if($$('.center-vertical,.center-horizontal').length==0) 自动移动()
         window.timer3 = setInterval(()=>开启auto && 自动移动(), 100)
         myColor = $('.general.selectable').classList[0]
@@ -73,13 +99,12 @@ window.timer1 = setInterval(()=>{
 
     } else {
         console.clear()
-        console.error('clear')
         兵营.clear()
         敌人兵营.clear()
         基地.clear()
         已经探索过的地图.clear()
         clearInterval(window.timer3)
-        drArmyOld=0
+        drArmyOld = 0
     }
 }
 , 100)
@@ -105,8 +130,13 @@ window.timer2 = setInterval(()=>{
     const [myStart,myName,myArmy,myLand] = [...$$("#game-leaderboard tr:nth-child(2) td")].map((e)=>e.innerText)
     const [drStart,drName,drArmy,drLand] = [...$$("#game-leaderboard tr:nth-child(3) td")].map((e)=>e.innerText)
 
+    const armyDom = $('#ui #army')
+    const armyDiff = myArmy - drArmy
+    armyDom.innerText = `${armyDiff} (${myArmy} | ${drArmy})`
+    armyDom.style.color = armyDiff > 0 ? 'blue' : 'red'
+
     if (drArmy - drArmyOld < -30) {
-        console.info("%c敌人偷塔", "font-size:80px",drArmy, drArmyOld);
+        console.info("%c敌人偷塔", "font-size:80px", drArmy, drArmyOld);
 
     }
     drArmyOld = drArmy
