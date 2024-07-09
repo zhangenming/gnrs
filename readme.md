@@ -25,8 +25,8 @@ function useCss(textContent) {
     style.textContent = textContent;
     document.head.appendChild(style);
 }
-useCss(``);
-useCss(``);
+
+useCss('')
 useCss(`
     .lightblue {background-color:red!important}
     .general {z-index: 200!important;outline: 10px solid red;}
@@ -336,7 +336,6 @@ function obDomRoot() {
             if (gameStaus === true) {
                 gameStaus = false;
                 log('game over')
-                gameEnd();
             }
 
             // 输了自动邀请
@@ -375,9 +374,9 @@ function obDomRoot() {
                         }
 
                         if (is敌人(parentNode)) {
-                            if (utils.比较兵力(parentNode, 我的基地)) {// log('发现危险分子')
-                            // utils.添加样式(parentNode, '可被吃掉')
-                            }
+                            // if (utils.比较兵力(parentNode, 我的基地)) {// log('发现危险分子')
+                            // // utils.添加样式(parentNode, '可被吃掉')
+                            // }
 
                             const 所有敌人 = get.所有敌人();
                             const 敌人主力 = Math.max(...所有敌人);
@@ -459,24 +458,22 @@ function addGameResult() {
     });
 }
 
-function gameEnd() {
-    兵营.clear()
-    敌人兵营.clear()
-    基地.clear();
-    已经探索过的地图.clear();
-    突出敌人动向.clear();
-
-    输了 = document.querySelector("#game-page > div.alert.center > center > h1").innerText !== "You won!";
-    addGameResult();
-}
-
 function gameStart() {
     console.clear();
     init();
     $$("#gameMap td").forEach(obDom);
 
+    // 输了 = document.querySelector("#game-page > div.alert.center > center > h1").innerText !== "You won!";
+    // addGameResult();
+
     // clear上盘数据
     clearDoms.forEach((dom)=>(dom.style = null));
+    兵营.clear()
+    敌人兵营.clear()
+    基地.clear();
+    已经探索过的地图.clear();
+    突出敌人动向.clear();
+    
     $("#game-leaderboard > tbody > tr:nth-child(1) > td:nth-child(2)").innerHTML = ''
     $(".chat-messages-container").classList.add("minimized");
     // 聊天窗口缩小
@@ -484,18 +481,19 @@ function gameStart() {
     log("地图大小", $("#gameMap tbody tr").childElementCount, $("#gameMap tbody").childElementCount);
 
     回合dom = $("#turn-counter")
-    我的基地 = $(`.general`);
-    我的颜色 = 我的基地.className.includes("red") ? "red" : "lightblue";
-    敌人颜色 = 我的颜色 === "red" ? "lightblue" : "red";
-
+    
     const [我的名字,我的军队,我的陆地,敌人名字] = get兵力();
+    我的颜色 = [...我的名字.classList].find(e=>e!='leaderboard-name')
+    敌人颜色 = [...敌人名字.classList].find(e=>e!='leaderboard-name')
     我的名字.style.setProperty("background-color", "#4363d8", "important");
     敌人名字.style.setProperty("background-color", "red", "important");
+
 
     胜率feat();
     自动移动feat();
 
     setTimeout(()=>{
+        log(document.body.clientHeight , $(".relative").offsetHeight)
         document.documentElement.style.setProperty("--scale", document.body.clientHeight / $(".relative").offsetHeight);
     }
     , 500);
@@ -608,17 +606,18 @@ function 回合feat() {
     dom.innerText = 50 - (x % 50)
 
     function createDom() {
-        if (!$("#turn-flag")){
-          $("#gameMap").style.position = 'relative'
-          $("#gameMap").insertAdjacentHTML("beforeend", `<div id="turn-flag" style="
-         position: absolute;
-      top: -15px;
-      background: black;
-      color: white;
-      height: 15px;
-      z-index: 9999;
-      text-align: right;"></div>`);
-        }
+        if ($("#turn-flag"))
+            return $("#turn-flag")
+
+        $("#gameMap").style.position = 'relative'
+        $("#gameMap").insertAdjacentHTML("beforeend", `<div id="turn-flag" style="
+       position: absolute;
+    top: -15px;
+    background: black;
+    color: white;
+    height: 15px;
+    z-index: 9999;
+    text-align: right;"></div>`);
 
         return $("#turn-flag")
     }
