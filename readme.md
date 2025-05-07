@@ -1,97 +1,5 @@
 ```js
 // aaOfVYRbM zem2821
-const lightblue = "#4363d8";
-clearInterval(window.timer2);
-const 游戏结束 = ".alert.center";
-
-const log = console.info;
-console.log = ()=>{}
-;
-console.group = ()=>{}
-;
-const W = 87;
-const A = 65;
-const S = 83;
-const D = 68;
-
-const $$ = (str)=>[...document.querySelectorAll(str)];
-const $ = (str)=>$$(str)[0];
-
-const 我的用户名 = "zem";
-
-function useCss(textContent) {
-    const style = document.createElement("style");
-    style.type = "text/css";
-    style.textContent = textContent;
-    document.head.appendChild(style);
-}
-
-useCss('')
-useCss(`
-    .lightblue {background-color:red!important}
-    .general {z-index: 200!important;outline: 10px solid red;}
-    .selectable {background-color:#4363d8!important}
-    .selected  {z-index: 200!important;outline: 8px solid #ff8c00; }
-    .attackable {opacity:1!important;}
-    .center-vertical, .center-horizontal {color:#ff8c00!important;font-size:25px}
-    #replay-ad-container {display:none!important}
-    ${游戏结束}:hover {opacity:20}
-    #turn-flag{
-        position: absolute;
-        top: 0;
-        background: red;
-        height: 7px;
-        z-index: 9999;
-        width: var(--width)
-    }
-    #turn-counter{
-        top: 45%;
-        left: auto;
-        right: 0px;
-        display: none
-    }
-    #game-leaderboard {top:25%}
-    .relative{
-        left:0px!important;top:15px!important;
-        transform-origin: left top;
-        transform: scale(var(--scale));
-    }
-    .server-chat-message{ display: none }
-    .敌人基地 {zIndex:111!important; outline: 5px solid red}
-    .敌人主力 {background-color: #9C27B0 !important;color: white!important;font-weight: 900;}
-    .可被吃掉 {background-color: #ef08e0 !important;color: #65f500!important;font-weight: 900;}
-    
-    `);
-
-function init() {
-    const 棋盘宽度 = $("#gameMap tbody tr").childElementCount;
-    const 棋盘高度 = $("#gameMap tbody").childElementCount;
-
-    $$("#gameMap td").forEach((dom,idx,arr)=>{
-        const line = Math.floor(idx / 棋盘宽度);
-        const row = idx % 棋盘宽度;
-
-        const left = row !== 0 && arr[idx - 1];
-        const right = row !== 棋盘宽度 - 1 && arr[idx + 1];
-        const top = line !== 0 && arr[idx - 棋盘宽度];
-        const bottom = line !== 棋盘高度 - 1 && arr[idx + 棋盘宽度];
-
-        Object.assign(dom, {
-            idx,
-            line,
-            row,
-
-            left,
-            right,
-            top,
-            bottom,
-
-            nodes: [left, right, top, bottom].filter((e)=>e),
-        });
-    }
-    );
-}
-
 const 基地 = new Set();
 const 已经探索过的地图 = new Set();
 
@@ -198,49 +106,6 @@ function 自动移动feat() {
     , 10, 's')
 }
 
-function clickDom(dom) {
-    if (!dom)
-        return;
-
-    dom.dispatchEvent(new MouseEvent("mousedown",{
-        bubbles: true,
-    }));
-    dom.dispatchEvent(new MouseEvent("mouseup",{
-        bubbles: true,
-    }));
-}
-function 移动(l, r) {
-    key(计算方向(l, r));
-
-    function 计算方向(l, r) {
-        if (typeof l !== "number")
-            l = l.idx;
-
-        if (typeof r !== "number")
-            r = r.idx;
-
-        if (r > l) {
-            if (r == l + 1)
-                return D;
-
-            return S;
-        }
-
-        if (r + 1 == l)
-            return A;
-
-        return W;
-    }
-
-}
-
-function key(k) {
-    document.dispatchEvent(new KeyboardEvent("keydown",{
-        keyCode: typeof k === 'number' ? k : k.toUpperCase().charCodeAt(0),
-        bubbles: true,
-    }));
-}
-
 let 突出敌人动向 = new Set();
 function obDom(dom) {
     const config = {
@@ -277,26 +142,6 @@ function obDom(dom) {
     dom.o?.disconnect();
     dom.o = new MutationObserver(callback);
     dom.o.observe(dom, config);
-}
-
-function get兵力() {
-    const [陆地1,军队1,名字1,star1] = [...$("#game-leaderboard > tbody > tr:nth-child(2)").children, ].reverse();
-    const [陆地2,军队2,名字2,star2] = [...$("#game-leaderboard > tbody > tr:nth-child(3)").children, ].reverse();
-
-    const [我的名字,我的军队,我的陆地,敌人名字,敌人军队,敌人陆地,start] = 名字1.innerText.includes(我的用户名) ? [名字1, 军队1, 陆地1, 名字2, 军队2, 陆地2, star1] : [名字2, 军队2, 陆地2, 名字1, 军队1, 陆地1, star2];
-
-    return [我的名字, 我的军队, 我的陆地, 敌人名字, 敌人军队, 敌人陆地, start];
-}
-function flash(dom) {
-    let flag = 0
-    const timer = setInterval(()=>{
-        flag++
-        dom.style.color = (flag % 2) ? 'white' : 'black'
-        dom.style.background = (flag % 2) ? 'black' : 'white'
-    }
-    , 100)
-
-    setTimeout(()=>clearInterval(timer), 1500)
 }
 
 const utils = {
